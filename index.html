@@ -15,115 +15,215 @@
 
 body{
   height:100vh;
-  background:#020617;
+  background:#000;
   overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#fff;
+  color:white;
 }
 
-/* 🔵 Blue pulse background */
-.bg{
+/* 🌌 STAR PARALLAX */
+.stars, .stars2, .stars3{
+  position:fixed;
+  inset:0;
+  background-repeat:repeat;
+  z-index:-3;
+}
+.stars{
+  background-image: radial-gradient(1px 1px at 20px 30px, white, transparent);
+  animation: moveStars 120s linear infinite;
+  opacity:.4;
+}
+.stars2{
+  background-image: radial-gradient(1.5px 1.5px at 40px 60px, #38bdf8, transparent);
+  animation: moveStars 80s linear infinite;
+  opacity:.6;
+}
+.stars3{
+  background-image: radial-gradient(2px 2px at 80px 120px, #93c5fd, transparent);
+  animation: moveStars 40s linear infinite;
+  opacity:.8;
+}
+@keyframes moveStars{
+  from{background-position:0 0}
+  to{background-position:-2000px 2000px}
+}
+
+/* 🔵 Blue pulse glow */
+.glow{
   position:fixed;
   inset:0;
   background:
-    radial-gradient(circle at 20% 30%, rgba(56,189,248,.35), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(37,99,235,.35), transparent 40%);
+    radial-gradient(circle at 30% 30%, rgba(56,189,248,.25), transparent 40%),
+    radial-gradient(circle at 70% 70%, rgba(37,99,235,.25), transparent 40%);
   animation:pulse 6s ease-in-out infinite alternate;
-  z-index:-1;
+  z-index:-2;
 }
 @keyframes pulse{
   from{filter:blur(0)}
   to{filter:blur(14px)}
 }
 
-/* ⬜ Square box */
-.square{
-  width:280px;
-  height:280px;
-  border-radius:18px;
-  background:rgba(255,255,255,.06);
-  backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.15);
-  box-shadow:0 35px 90px rgba(0,0,0,.7);
+/* 🎥 CINEMATIC INTRO ZOOM */
+.scene{
+  transform:perspective(900px) rotateX(12deg) scale(0.85);
+  animation:introZoom 3s ease-out forwards;
+}
+@keyframes introZoom{
+  to{transform:perspective(900px) rotateX(12deg) scale(1)}
+}
+
+/* 🌍 Earth */
+.earth{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #38bdf8, #020617 70%);
+  box-shadow:
+    inset -30px -30px 60px rgba(0,0,0,.8),
+    0 0 120px rgba(56,189,248,.4);
   position:relative;
+  animation:spin 18s linear infinite;
+}
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+/* 🧍‍♂️ Man */
+.man{
+  position:absolute;
+  top:-36px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:40px;
+  filter:drop-shadow(0 8px 12px black);
+}
+
+/* 🔫 Gun */
+.gun{
+  position:absolute;
+  right:-18px;
+  top:12px;
+  font-size:22px;
+}
+
+/* 💥 Bullet text */
+.bullet{
+  position:absolute;
+  right:-20px;
+  top:18px;
+  font-size:14px;
+  letter-spacing:2px;
+  color:#38bdf8;
+  text-shadow:0 0 12px #38bdf8,0 0 24px #0ea5e9;
+  animation:shoot 2s linear infinite;
+}
+.trail{
+  position:absolute;
+  right:-10px;
+  top:22px;
+  width:160px;
+  height:2px;
+  background:linear-gradient(to right, rgba(56,189,248,.7), transparent);
+  animation:trail 2s linear infinite;
+}
+@keyframes shoot{
+  0%{transform:translateX(0) scale(.6);opacity:0}
+  10%{opacity:1}
+  100%{transform:translateX(420px) scale(1.4);opacity:0}
+}
+@keyframes trail{
+  from{opacity:1}
+  to{opacity:0}
+}
+
+/* 🔫 CAMERA SHAKE */
+.shake{
+  animation:shake .25s;
+}
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  20%{transform:translate(-4px,3px)}
+  40%{transform:translate(4px,-3px)}
+  60%{transform:translate(-3px,2px)}
+  80%{transform:translate(3px,-2px)}
+  100%{transform:translate(0,0)}
+}
+
+/* Tap overlay */
+#overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
   display:flex;
   align-items:center;
   justify-content:center;
-  text-align:center;
+  z-index:10;
+  cursor:pointer;
 }
-
-/* Center text */
-.square span{
-  font-size:16px;
-  letter-spacing:3px;
-  color:#93c5fd;
-}
-
-/* 🏃‍♂️🐕 Path */
-.path{
-  position:absolute;
-  inset:-22px;
-  pointer-events:none;
-}
-
-/* Actor (emoji + optional name) */
-.actor{
-  position:absolute;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:20px;
-  white-space:nowrap;
-  animation:walk 8s linear infinite;
-}
-
-/* Charlie name */
-.actor b{
-  font-size:13px;
-  font-weight:600;
+#overlay span{
+  padding:18px 28px;
+  border:1px solid #38bdf8;
+  border-radius:14px;
   color:#38bdf8;
-}
-
-/* Dog ahead, man behind */
-.dog{ animation-delay:0s; cursor:pointer; pointer-events:auto; }
-.man{ animation-delay:1.4s; }
-
-/* Walking along square edges */
-@keyframes walk{
-  0%{top:0;left:0}
-  25%{top:0;left:calc(100% - 60px)}
-  50%{top:calc(100% - 24px);left:calc(100% - 60px)}
-  75%{top:calc(100% - 24px);left:0}
-  100%{top:0;left:0}
+  letter-spacing:2px;
+  box-shadow:0 0 20px #38bdf8;
 }
 </style>
 </head>
 
 <body>
 
-<div class="bg"></div>
+<div class="stars"></div>
+<div class="stars2"></div>
+<div class="stars3"></div>
+<div class="glow"></div>
 
-<div class="square">
+<div id="overlay">
+  <span>TAP TO START SOUND</span>
+</div>
 
-  <div class="path">
-    <div class="actor dog" id="dog">🐕 <b>Charlie</b></div>
-    <div class="actor man">🏃‍♂️</div>
+<!-- Sounds -->
+<audio id="bg" loop>
+  <source src="https://assets.mixkit.co/music/preview/mixkit-forest-treasure-138.mp3">
+</audio>
+<audio id="gun">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-fast-small-sweep-transition-166.mp3">
+</audio>
+
+<div class="scene" id="scene">
+  <div class="earth">
+    <div class="man">
+      🧍‍♂️
+      <div class="gun">🔫</div>
+      <div class="trail"></div>
+      <div class="bullet">COMING&nbsp;SOON</div>
+    </div>
   </div>
-
-  <span>COMING SOON</span>
-
 </div>
 
 <script>
-/* 🐕 Tap / click = Charlie runs faster */
-const dog = document.getElementById("dog");
-let fast = false;
+const overlay = document.getElementById("overlay");
+const bg = document.getElementById("bg");
+const gun = document.getElementById("gun");
+const scene = document.getElementById("scene");
 
-dog.addEventListener("click", () => {
-  fast = !fast;
-  dog.style.animationDuration = fast ? "3s" : "8s";
+overlay.addEventListener("click", ()=>{
+  bg.volume = 0.4;
+  bg.play();
+  overlay.style.display="none";
+
+  setInterval(()=>{
+    gun.currentTime = 0;
+    gun.play();
+
+    // 🔫 Camera shake on fire
+    scene.classList.add("shake");
+    setTimeout(()=>scene.classList.remove("shake"),250);
+  },2000);
 });
 </script>
 
