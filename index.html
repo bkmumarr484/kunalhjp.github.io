@@ -23,7 +23,7 @@ body{
   color:#fff;
 }
 
-/* 🔵 Blue pulse / dot style background */
+/* 🔵 Blue pulse background */
 .bg{
   position:fixed;
   inset:0;
@@ -33,7 +33,6 @@ body{
   animation:pulse 6s ease-in-out infinite alternate;
   z-index:-1;
 }
-
 @keyframes pulse{
   from{filter:blur(0)}
   to{filter:blur(14px)}
@@ -69,7 +68,7 @@ body{
   pointer-events:none;
 }
 
-/* Actor (emoji + name) */
+/* Actor (emoji + optional name) */
 .actor{
   position:absolute;
   display:flex;
@@ -80,6 +79,7 @@ body{
   animation:walk 8s linear infinite;
 }
 
+/* Charlie name */
 .actor b{
   font-size:13px;
   font-weight:600;
@@ -87,7 +87,7 @@ body{
 }
 
 /* Dog ahead, man behind */
-.dog{ animation-delay:0s; }
+.dog{ animation-delay:0s; cursor:pointer; pointer-events:auto; }
 .man{ animation-delay:1.4s; }
 
 /* Walking along square edges */
@@ -108,13 +108,24 @@ body{
 <div class="square">
 
   <div class="path">
-    <div class="actor dog">🐕 <b>Charlie</b></div>
-    <div class="actor man">🏃‍♂️ <b>Kunal</b></div>
+    <div class="actor dog" id="dog">🐕 <b>Charlie</b></div>
+    <div class="actor man">🏃‍♂️</div>
   </div>
 
   <span>COMING SOON</span>
 
 </div>
+
+<script>
+/* 🐕 Tap / click = Charlie runs faster */
+const dog = document.getElementById("dog");
+let fast = false;
+
+dog.addEventListener("click", () => {
+  fast = !fast;
+  dog.style.animationDuration = fast ? "3s" : "8s";
+});
+</script>
 
 </body>
 </html>
