@@ -1,135 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Offline Dino Game</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<title>Visual Stress Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
-  body {
-    margin: 0;
-    background: #f7f7f7;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: monospace;
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:system-ui}
+  #ui{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 30% 30%, #0b1a2a, #000);
+    z-index:2
   }
-
-  canvas {
-    background: #fff;
-    border: 2px solid #000;
+  .card{
+    background:rgba(255,255,255,.06);backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.18);border-radius:18px;
+    padding:28px 24px;max-width:360px;text-align:center;color:#cfe9ff;
+    box-shadow:0 30px 80px rgba(0,0,0,.7)
   }
-
-  #info {
-    position: absolute;
-    top: 20px;
-    text-align: center;
-    font-size: 14px;
-    color: #444;
+  .card h1{margin:0 0 8px;font-size:22px}
+  .card p{margin:0 0 18px;font-size:14px;opacity:.9}
+  .btns{display:flex;gap:10px;justify-content:center}
+  button{
+    padding:12px 16px;border-radius:12px;border:1px solid #4fc3ff;
+    background:#0b5cff;color:#fff;font-weight:700;cursor:pointer
   }
+  button.alt{background:transparent}
+  #hud{
+    position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+    color:#9fd7ff;font-size:12px;opacity:.9;z-index:1
+  }
+  canvas{display:block}
 </style>
 </head>
 <body>
 
-<div id="info">Tap / Space to Jump</div>
-<canvas id="game" width="600" height="200"></canvas>
+<div id="ui">
+  <div class="card">
+    <h1>Visual Stress Demo</h1>
+    <p>Opt-in cinematic GPU demo. Start when ready. Stop anytime.</p>
+    <div class="btns">
+      <button id="start">START</button>
+      <button id="stop" class="alt">STOP</button>
+    </div>
+  </div>
+</div>
 
+<div id="hud"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+let renderer, scene, camera, points, running=false, quality=1;
+const hud=document.getElementById('hud');
 
-let dino = {
-  x: 50,
-  y: 150,
-  w: 20,
-  h: 40,
-  vy: 0,
-  jump: false
+function detectQuality(){
+  const mem = navigator.deviceMemory || 4;
+  const cores = navigator.hardwareConcurrency || 4;
+  // very simple heuristic
+  quality = (mem>=6 && cores>=6) ? 1.4 : (mem>=4 ? 1 : .7);
+}
+
+function init(){
+  detectQuality();
+  scene=new THREE.Scene();
+  camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
+  camera.position.z=6;
+
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  document.body.appendChild(renderer.domElement);
+
+  // particles
+  const COUNT=Math.floor(120000*quality); // looks heavy, still safe
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(COUNT*3);
+  for(let i=0;i<COUNT;i++){
+    pos[i*3+0]=(Math.random()-.5)*40;
+    pos[i*3+1]=(Math.random()-.5)*40;
+    pos[i*3+2]=(Math.random()-.5)*40;
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const mat=new THREE.PointsMaterial({color:0x6ecbff,size:.03,transparent:true,opacity:.9});
+  points=new THREE.Points(geo,mat);
+  scene.add(points);
+
+  window.addEventListener('resize',onResize);
+  animate();
+}
+
+function animate(){
+  if(!running) return;
+  requestAnimationFrame(animate);
+  points.rotation.y+=.0015;
+  points.rotation.x+=.0009;
+  camera.position.z=6+Math.sin(performance.now()*0.0004)*.2;
+  renderer.render(scene,camera);
+  hud.textContent=`Particles: ${points.geometry.attributes.position.count} | Quality: ${quality}`;
+}
+
+function onResize(){
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+}
+
+document.getElementById('start').onclick=()=>{
+  if(running) return;
+  document.getElementById('ui').style.display='none';
+  if(!renderer) init();
+  running=true; animate();
 };
 
-let cactus = {
-  x: 600,
-  y: 160,
-  w: 20,
-  h: 30
+document.getElementById('stop').onclick=()=>{
+  running=false;
+  document.getElementById('ui').style.display='flex';
 };
-
-let gravity = 0.8;
-let score = 0;
-let gameOver = false;
-
-// CONTROLS
-document.addEventListener("keydown", e => {
-  if (e.code === "Space") jump();
-});
-document.addEventListener("touchstart", jump);
-
-function jump() {
-  if (!dino.jump) {
-    dino.vy = -12;
-    dino.jump = true;
-  }
-}
-
-// GAME LOOP
-function update() {
-  if (gameOver) return;
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // Ground
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0,190,600,2);
-
-  // Dino
-  dino.y += dino.vy;
-  dino.vy += gravity;
-
-  if (dino.y >= 150) {
-    dino.y = 150;
-    dino.jump = false;
-  }
-
-  ctx.fillRect(dino.x,dino.y,dino.w,dino.h);
-
-  // Cactus
-  cactus.x -= 6;
-  if (cactus.x < -20) {
-    cactus.x = 600;
-    score++;
-  }
-
-  ctx.fillRect(cactus.x,cactus.y,cactus.w,cactus.h);
-
-  // Collision
-  if (
-    dino.x < cactus.x + cactus.w &&
-    dino.x + dino.w > cactus.x &&
-    dino.y < cactus.y + cactus.h &&
-    dino.y + dino.h > cactus.y
-  ) {
-    gameOver = true;
-    drawGameOver();
-  }
-
-  // Score
-  ctx.font = "14px monospace";
-  ctx.fillText("Score: " + score, 480, 20);
-
-  requestAnimationFrame(update);
-}
-
-function drawGameOver() {
-  ctx.fillStyle = "red";
-  ctx.font = "20px monospace";
-  ctx.fillText("GAME OVER", 220, 90);
-  ctx.font = "14px monospace";
-  ctx.fillText("Refresh to Restart", 210, 115);
-}
-
-update();
 </script>
-
 </body>
 </html>
