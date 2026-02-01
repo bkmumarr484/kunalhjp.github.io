@@ -1,231 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Coming Soon</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<title>Coming Soon – Real 3D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
-}
-
-body{
-  height:100vh;
-  background:#000;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-}
-
-/* 🌌 STAR PARALLAX */
-.stars, .stars2, .stars3{
-  position:fixed;
-  inset:0;
-  background-repeat:repeat;
-  z-index:-3;
-}
-.stars{
-  background-image: radial-gradient(1px 1px at 20px 30px, white, transparent);
-  animation: moveStars 120s linear infinite;
-  opacity:.4;
-}
-.stars2{
-  background-image: radial-gradient(1.5px 1.5px at 40px 60px, #38bdf8, transparent);
-  animation: moveStars 80s linear infinite;
-  opacity:.6;
-}
-.stars3{
-  background-image: radial-gradient(2px 2px at 80px 120px, #93c5fd, transparent);
-  animation: moveStars 40s linear infinite;
-  opacity:.8;
-}
-@keyframes moveStars{
-  from{background-position:0 0}
-  to{background-position:-2000px 2000px}
-}
-
-/* 🔵 Blue pulse glow */
-.glow{
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(56,189,248,.25), transparent 40%),
-    radial-gradient(circle at 70% 70%, rgba(37,99,235,.25), transparent 40%);
-  animation:pulse 6s ease-in-out infinite alternate;
-  z-index:-2;
-}
-@keyframes pulse{
-  from{filter:blur(0)}
-  to{filter:blur(14px)}
-}
-
-/* 🎥 CINEMATIC INTRO ZOOM */
-.scene{
-  transform:perspective(900px) rotateX(12deg) scale(0.85);
-  animation:introZoom 3s ease-out forwards;
-}
-@keyframes introZoom{
-  to{transform:perspective(900px) rotateX(12deg) scale(1)}
-}
-
-/* 🌍 Earth */
-.earth{
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  background:
-    radial-gradient(circle at 30% 30%, #38bdf8, #020617 70%);
-  box-shadow:
-    inset -30px -30px 60px rgba(0,0,0,.8),
-    0 0 120px rgba(56,189,248,.4);
-  position:relative;
-  animation:spin 18s linear infinite;
-}
-@keyframes spin{
-  from{transform:rotate(0deg)}
-  to{transform:rotate(360deg)}
-}
-
-/* 🧍‍♂️ Man */
-.man{
-  position:absolute;
-  top:-36px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:40px;
-  filter:drop-shadow(0 8px 12px black);
-}
-
-/* 🔫 Gun */
-.gun{
-  position:absolute;
-  right:-18px;
-  top:12px;
-  font-size:22px;
-}
-
-/* 💥 Bullet text */
-.bullet{
-  position:absolute;
-  right:-20px;
-  top:18px;
-  font-size:14px;
-  letter-spacing:2px;
-  color:#38bdf8;
-  text-shadow:0 0 12px #38bdf8,0 0 24px #0ea5e9;
-  animation:shoot 2s linear infinite;
-}
-.trail{
-  position:absolute;
-  right:-10px;
-  top:22px;
-  width:160px;
-  height:2px;
-  background:linear-gradient(to right, rgba(56,189,248,.7), transparent);
-  animation:trail 2s linear infinite;
-}
-@keyframes shoot{
-  0%{transform:translateX(0) scale(.6);opacity:0}
-  10%{opacity:1}
-  100%{transform:translateX(420px) scale(1.4);opacity:0}
-}
-@keyframes trail{
-  from{opacity:1}
-  to{opacity:0}
-}
-
-/* 🔫 CAMERA SHAKE */
-.shake{
-  animation:shake .25s;
-}
-@keyframes shake{
-  0%{transform:translate(0,0)}
-  20%{transform:translate(-4px,3px)}
-  40%{transform:translate(4px,-3px)}
-  60%{transform:translate(-3px,2px)}
-  80%{transform:translate(3px,-2px)}
-  100%{transform:translate(0,0)}
-}
-
-/* Tap overlay */
-#overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10;
-  cursor:pointer;
-}
-#overlay span{
-  padding:18px 28px;
-  border:1px solid #38bdf8;
-  border-radius:14px;
-  color:#38bdf8;
-  letter-spacing:2px;
-  box-shadow:0 0 20px #38bdf8;
-}
+  body { margin:0; overflow:hidden; background:#000; }
+  canvas { display:block; }
 </style>
 </head>
 
 <body>
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js";
+import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js";
+import { FontLoader } from "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/geometries/TextGeometry.js";
 
-<div class="stars"></div>
-<div class="stars2"></div>
-<div class="stars3"></div>
-<div class="glow"></div>
+/* 🔧 BASIC SETUP */
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 10, 40);
 
-<div id="overlay">
-  <span>TAP TO START SOUND</span>
-</div>
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0, 4, 10);
 
-<!-- Sounds -->
-<audio id="bg" loop>
-  <source src="https://assets.mixkit.co/music/preview/mixkit-forest-treasure-138.mp3">
-</audio>
-<audio id="gun">
-  <source src="https://assets.mixkit.co/sfx/preview/mixkit-fast-small-sweep-transition-166.mp3">
-</audio>
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
 
-<div class="scene" id="scene">
-  <div class="earth">
-    <div class="man">
-      🧍‍♂️
-      <div class="gun">🔫</div>
-      <div class="trail"></div>
-      <div class="bullet">COMING&nbsp;SOON</div>
-    </div>
-  </div>
-</div>
+/* 🎥 CONTROLS */
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enableZoom = false;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.4;
 
-<script>
-const overlay = document.getElementById("overlay");
-const bg = document.getElementById("bg");
-const gun = document.getElementById("gun");
-const scene = document.getElementById("scene");
+/* 💡 LIGHTS */
+scene.add(new THREE.AmbientLight(0x404040, 1.5));
+const keyLight = new THREE.DirectionalLight(0x6ecbff, 2);
+keyLight.position.set(5,5,5);
+scene.add(keyLight);
 
-overlay.addEventListener("click", ()=>{
-  bg.volume = 0.4;
-  bg.play();
-  overlay.style.display="none";
+/* 🌍 EARTH */
+const earthGeo = new THREE.SphereGeometry(2.5, 64, 64);
+const earthMat = new THREE.MeshStandardMaterial({
+  map: new THREE.TextureLoader().load(
+    "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg"
+  ),
+  roughness:0.6,
+  metalness:0.2
+});
+const earth = new THREE.Mesh(earthGeo, earthMat);
+scene.add(earth);
 
-  setInterval(()=>{
-    gun.currentTime = 0;
-    gun.play();
+/* 🌌 STARFIELD */
+const starsGeo = new THREE.BufferGeometry();
+const starCount = 2000;
+const starPos = [];
+for(let i=0;i<starCount;i++){
+  starPos.push(
+    (Math.random()-0.5)*200,
+    (Math.random()-0.5)*200,
+    -Math.random()*200
+  );
+}
+starsGeo.setAttribute("position", new THREE.Float32BufferAttribute(starPos,3));
+const stars = new THREE.Points(
+  starsGeo,
+  new THREE.PointsMaterial({ color:0xffffff, size:0.6 })
+);
+scene.add(stars);
 
-    // 🔫 Camera shake on fire
-    scene.classList.add("shake");
-    setTimeout(()=>scene.classList.remove("shake"),250);
-  },2000);
+/* 🧍‍♂️ SIMPLE HUMAN SILHOUETTE */
+const body = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.25,0.35,1.6,16),
+  new THREE.MeshStandardMaterial({ color:0xaaaaaa })
+);
+body.position.set(0,3.2,2.3);
+scene.add(body);
+
+const head = new THREE.Mesh(
+  new THREE.SphereGeometry(0.28,16,16),
+  new THREE.MeshStandardMaterial({ color:0xbbbbbb })
+);
+head.position.set(0,4.2,2.3);
+scene.add(head);
+
+/* 💥 3D TEXT BULLET */
+let textMesh;
+const fontLoader = new FontLoader();
+fontLoader.load(
+  "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json",
+  font=>{
+    const textGeo = new TextGeometry("COMING SOON",{
+      font,
+      size:0.35,
+      height:0.05
+    });
+    const textMat = new THREE.MeshStandardMaterial({
+      color:0x4fc3ff,
+      emissive:0x4fc3ff,
+      emissiveIntensity:1.5
+    });
+    textMesh = new THREE.Mesh(textGeo, textMat);
+    textMesh.position.set(0.3,3.5,2.1);
+    scene.add(textMesh);
+  }
+);
+
+/* 🎬 ANIMATION LOOP */
+function animate(){
+  requestAnimationFrame(animate);
+
+  earth.rotation.y += 0.0015;
+
+  if(textMesh){
+    textMesh.position.x += 0.05;
+    if(textMesh.position.x > 6){
+      textMesh.position.x = 0.3;
+    }
+  }
+
+  controls.update();
+  renderer.render(scene,camera);
+}
+animate();
+
+/* 📱 RESIZE */
+addEventListener("resize", ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
 });
 </script>
-
 </body>
 </html>
