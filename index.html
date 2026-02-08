@@ -2,82 +2,31 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Beyond Reality</title>
+<title>Secure Network Terminal</title>
 
 <style>
 
 body{
-margin:0;
 background:black;
-color:white;
+color:#00ff00;
 font-family:monospace;
-overflow-x:hidden;
-transition:background 1s;
+padding:20px;
+font-size:18px;
 }
 
-/* Universe background */
-
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
+#terminal{
+white-space:pre-line;
 }
 
-/* Sections */
-
-.section{
-height:150vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:40px;
+.cursor{
+display:inline-block;
+width:10px;
+background:#00ff00;
+animation:blink 1s infinite;
 }
 
-/* Glitch text */
-
-.glitch{
-font-size:60px;
-animation:glitch 1s infinite;
-}
-
-@keyframes glitch{
-0%{text-shadow:2px 2px red;}
-50%{text-shadow:-2px -2px cyan;}
-100%{text-shadow:2px 2px red;}
-}
-
-/* Typing text */
-
-.typing{
-font-size:22px;
-width:70%;
-border-right:3px solid white;
-white-space:nowrap;
-overflow:hidden;
-}
-
-/* Hidden ending */
-
-#final{
-display:none;
-font-size:70px;
-color:red;
-text-shadow:0 0 30px red;
-}
-
-/* Breathing screen */
-
-@keyframes breathe{
-0%{transform:scale(1);}
-50%{transform:scale(1.02);}
-100%{transform:scale(1);}
-}
-
-body{
-animation:breathe 6s infinite;
+@keyframes blink{
+50%{opacity:0;}
 }
 
 </style>
@@ -85,134 +34,110 @@ animation:breathe 6s infinite;
 
 <body>
 
-<canvas id="stars"></canvas>
-
-<div class="section">
-<h1 class="glitch">YOU ENTERED SOMETHING UNKNOWN</h1>
-</div>
-
-<div class="section">
-<p id="type1" class="typing"></p>
-</div>
-
-<div class="section">
-<h1 class="glitch">REALITY IS UNSTABLE</h1>
-</div>
-
-<div class="section">
-<p id="type2" class="typing"></p>
-</div>
-
-<div class="section">
-<h1 class="glitch">YOU ARE BEING OBSERVED</h1>
-</div>
-
-<div class="section">
-<p id="type3" class="typing"></p>
-</div>
-
-<div class="section">
-<h1>Scroll Till The Truth Reveals</h1>
-<h1 id="final">YOU WERE THE SIGNAL</h1>
-</div>
+<div id="terminal"></div>
 
 <script>
 
-/* Star Universe */
+let terminal=document.getElementById("terminal");
 
-let canvas=document.getElementById("stars");
-let ctx=canvas.getContext("2d");
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let stars=[];
-
-for(let i=0;i<300;i++){
-stars.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-size:Math.random()*2
-});
-}
-
-function drawStars(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle="white";
-
-stars.forEach(s=>{
-ctx.fillRect(s.x,s.y,s.size,s.size);
-s.y+=0.3;
-if(s.y>canvas.height)s.y=0;
-});
-
-requestAnimationFrame(drawStars);
-}
-drawStars();
-
-/* Typing effect */
-
-function typing(text,id,speed){
+function typeLine(text, delay=40){
+return new Promise(resolve=>{
 let i=0;
-let el=document.getElementById(id);
 let interval=setInterval(()=>{
-el.textContent+=text[i];
+terminal.innerHTML+=text[i];
 i++;
-if(i>=text.length)clearInterval(interval);
-},speed);
+if(i>=text.length){
+clearInterval(interval);
+terminal.innerHTML+="\n";
+resolve();
+}
+},delay);
+});
 }
 
-typing("This page was hidden for years... Nobody knows who created it...", "type1", 50);
-
-setTimeout(()=>{
-typing("Every visitor reports strange feelings... as if someone is reading their thoughts...", "type2", 50);
-},6000);
-
-setTimeout(()=>{
-typing("Some believe this page is alive... And it remembers everyone who visits...", "type3", 50);
-},12000);
-
-/* Scroll Reality Distortion */
-
-window.addEventListener("scroll",()=>{
-let s=window.scrollY;
-document.body.style.background=
-`rgb(${s%200},0,${200-s%200})`;
-
-if(s>4000){
-document.getElementById("final").style.display="block";
+function wait(ms){
+return new Promise(r=>setTimeout(r,ms));
 }
-});
 
-/* Random whisper messages */
+async function startHack(){
 
-let whispers=[
-"You cannot leave...",
-"We see you...",
-"Turn back now...",
-"Why are you still here?",
-"Signal connected..."
-];
+await typeLine("Initializing Secure Network Terminal...");
+await wait(500);
 
-setInterval(()=>{
-console.log(whispers[Math.floor(Math.random()*whispers.length)]);
-},8000);
+await typeLine("Connecting to target device...");
+await wait(800);
 
-/* Cursor distortion */
+await typeLine("[✔] Device Found");
+await wait(500);
 
-document.addEventListener("mousemove",e=>{
-let d=document.createElement("div");
-d.style.position="absolute";
-d.style.left=e.pageX+"px";
-d.style.top=e.pageY+"px";
-d.style.width="4px";
-d.style.height="4px";
-d.style.background="cyan";
-d.style.borderRadius="50%";
-d.style.boxShadow="0 0 15px cyan";
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),400);
-});
+await typeLine("Bypassing firewall...");
+await wait(1200);
+
+await typeLine("[✔] Firewall Bypassed");
+await wait(600);
+
+await typeLine("Scanning device permissions...");
+await wait(900);
+
+await typeLine("Accessing Microphone...");
+await wait(1000);
+await typeLine("[✔] Microphone Connected");
+
+await typeLine("Accessing Camera...");
+await wait(1200);
+await typeLine("[✔] Camera Connected");
+
+await typeLine("Accessing Storage...");
+await wait(1000);
+await typeLine("[✔] Files Indexed");
+
+await typeLine("Collecting System Information...");
+await wait(1000);
+await typeLine("Extracting IP Address...");
+await wait(800);
+await typeLine("Encrypting user data...");
+await wait(1200);
+
+await typeLine("Searching orbital satellites...");
+await wait(1500);
+
+await typeLine("[✔] Orbital Satellite Located");
+await wait(800);
+
+await typeLine("Attempting Satellite Connection...");
+await wait(1500);
+
+await typeLine("[✔] Satellite Connected");
+await wait(800);
+
+await typeLine("Preparing Data Transfer...");
+await wait(1000);
+
+await typeLine("Uploading...");
+await progressBar();
+
+await typeLine("");
+await typeLine("Transmission Complete.");
+await wait(500);
+
+await typeLine("User Data Successfully Archived.");
+await wait(500);
+
+await typeLine("Session Terminated.");
+
+}
+
+async function progressBar(){
+
+for(let i=0;i<=100;i++){
+terminal.innerHTML = terminal.innerHTML.replace(/Uploading.*/g,"");
+terminal.innerHTML += "Uploading: [" + "█".repeat(i/5) + " ".repeat(20-i/5) + "] " + i + "%\n";
+await wait(70);
+}
+
+}
+
+startHack();
 
 </script>
 
