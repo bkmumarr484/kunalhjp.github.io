@@ -2,19 +2,20 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Forbidden Dimension</title>
+<title>Beyond Reality</title>
 
 <style>
 
 body{
 margin:0;
 background:black;
-color:#00ffea;
+color:white;
 font-family:monospace;
 overflow-x:hidden;
+transition:background 1s;
 }
 
-/* MATRIX BACKGROUND */
+/* Universe background */
 
 canvas{
 position:fixed;
@@ -26,7 +27,7 @@ z-index:-1;
 /* Sections */
 
 .section{
-height:120vh;
+height:150vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -35,52 +36,48 @@ text-align:center;
 padding:40px;
 }
 
-/* GLITCH TEXT */
+/* Glitch text */
 
 .glitch{
-font-size:70px;
-position:relative;
+font-size:60px;
 animation:glitch 1s infinite;
 }
 
 @keyframes glitch{
 0%{text-shadow:2px 2px red;}
-50%{text-shadow:-2px -2px blue;}
+50%{text-shadow:-2px -2px cyan;}
 100%{text-shadow:2px 2px red;}
 }
 
-/* Creepy paragraph */
+/* Typing text */
 
-.story{
-width:70%;
+.typing{
 font-size:22px;
-line-height:35px;
-color:white;
-text-shadow:0 0 10px cyan;
+width:70%;
+border-right:3px solid white;
+white-space:nowrap;
+overflow:hidden;
 }
 
 /* Hidden ending */
 
-#ending{
+#final{
 display:none;
-font-size:50px;
+font-size:70px;
 color:red;
 text-shadow:0 0 30px red;
 }
 
-/* Loading Screen */
+/* Breathing screen */
 
-#loading{
-position:fixed;
-width:100%;
-height:100%;
-background:black;
-color:lime;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:40px;
-z-index:999;
+@keyframes breathe{
+0%{transform:scale(1);}
+50%{transform:scale(1.02);}
+100%{transform:scale(1);}
+}
+
+body{
+animation:breathe 6s infinite;
 }
 
 </style>
@@ -88,135 +85,133 @@ z-index:999;
 
 <body>
 
-<div id="loading">Initializing Unknown Reality...</div>
-
-<canvas id="matrix"></canvas>
-
-<audio autoplay loop>
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6b3e1e02fd.mp3">
-</audio>
+<canvas id="stars"></canvas>
 
 <div class="section">
-<h1 class="glitch">YOU SHOULD NOT BE HERE</h1>
+<h1 class="glitch">YOU ENTERED SOMETHING UNKNOWN</h1>
 </div>
 
 <div class="section">
-<p class="story">
-It started as a normal website...  
-But the deeper you scroll...  
-The more reality fades away...  
-The screen is observing your movements...
-</p>
+<p id="type1" class="typing"></p>
 </div>
 
 <div class="section">
-<h1 class="glitch">SYSTEM IS WATCHING</h1>
+<h1 class="glitch">REALITY IS UNSTABLE</h1>
 </div>
 
 <div class="section">
-<p class="story">
-Every visitor leaves a digital shadow...  
-And shadows... never disappear...  
-Someone tried to close this page once...  
-They never returned...
-</p>
+<p id="type2" class="typing"></p>
 </div>
 
 <div class="section">
-<h1 class="glitch">SIGNAL LOST</h1>
+<h1 class="glitch">YOU ARE BEING OBSERVED</h1>
 </div>
 
 <div class="section">
-<p class="story">
-If random messages appear...  
-Ignore them...  
-They are not part of the website...
-</p>
+<p id="type3" class="typing"></p>
 </div>
 
 <div class="section">
-<h1>Click Screen 7 Times To Unlock Ending</h1>
-<h1 id="ending">YOU HAVE AWAKENED IT</h1>
+<h1>Scroll Till The Truth Reveals</h1>
+<h1 id="final">YOU WERE THE SIGNAL</h1>
 </div>
 
 <script>
 
-/* LOADING SCREEN */
+/* Star Universe */
 
-setTimeout(()=>{
-document.getElementById("loading").style.display="none";
-},3000);
-
-/* MATRIX RAIN */
-
-let canvas=document.getElementById("matrix");
+let canvas=document.getElementById("stars");
 let ctx=canvas.getContext("2d");
 
-canvas.height=window.innerHeight;
 canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-let letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-letters=letters.split("");
+let stars=[];
 
-let fontSize=14;
-let columns=canvas.width/fontSize;
-let drops=[];
-
-for(let i=0;i<columns;i++){
-drops[i]=1;
+for(let i=0;i<300;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2
+});
 }
 
-function draw(){
-ctx.fillStyle="rgba(0,0,0,0.05)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
+function drawStars(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="white";
 
-ctx.fillStyle="#0f0";
-ctx.font=fontSize+"px monospace";
+stars.forEach(s=>{
+ctx.fillRect(s.x,s.y,s.size,s.size);
+s.y+=0.3;
+if(s.y>canvas.height)s.y=0;
+});
 
-for(let i=0;i<drops.length;i++){
-let text=letters[Math.floor(Math.random()*letters.length)];
-ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
-drops[i]=0;
-
-drops[i]++;
+requestAnimationFrame(drawStars);
 }
+drawStars();
+
+/* Typing effect */
+
+function typing(text,id,speed){
+let i=0;
+let el=document.getElementById(id);
+let interval=setInterval(()=>{
+el.textContent+=text[i];
+i++;
+if(i>=text.length)clearInterval(interval);
+},speed);
 }
 
-setInterval(draw,33);
+typing("This page was hidden for years... Nobody knows who created it...", "type1", 50);
 
-/* RANDOM POPUPS */
+setTimeout(()=>{
+typing("Every visitor reports strange feelings... as if someone is reading their thoughts...", "type2", 50);
+},6000);
 
-let messages=[
-"Do not trust the screen",
-"Close this page now",
-"You are being logged",
-"Signal anomaly detected",
-"Someone joined your session"
+setTimeout(()=>{
+typing("Some believe this page is alive... And it remembers everyone who visits...", "type3", 50);
+},12000);
+
+/* Scroll Reality Distortion */
+
+window.addEventListener("scroll",()=>{
+let s=window.scrollY;
+document.body.style.background=
+`rgb(${s%200},0,${200-s%200})`;
+
+if(s>4000){
+document.getElementById("final").style.display="block";
+}
+});
+
+/* Random whisper messages */
+
+let whispers=[
+"You cannot leave...",
+"We see you...",
+"Turn back now...",
+"Why are you still here?",
+"Signal connected..."
 ];
 
 setInterval(()=>{
-alert(messages[Math.floor(Math.random()*messages.length)]);
-},25000);
+console.log(whispers[Math.floor(Math.random()*whispers.length)]);
+},8000);
 
-/* SECRET ENDING */
+/* Cursor distortion */
 
-let clickCount=0;
-
-document.body.onclick=function(){
-clickCount++;
-if(clickCount==7){
-document.getElementById("ending").style.display="block";
-}
-};
-
-/* SCROLL COLOR SHIFT */
-
-window.addEventListener("scroll",()=>{
-let scroll=window.scrollY;
-document.body.style.backgroundColor=
-`rgb(${scroll%255},0,${255-scroll%255})`;
+document.addEventListener("mousemove",e=>{
+let d=document.createElement("div");
+d.style.position="absolute";
+d.style.left=e.pageX+"px";
+d.style.top=e.pageY+"px";
+d.style.width="4px";
+d.style.height="4px";
+d.style.background="cyan";
+d.style.borderRadius="50%";
+d.style.boxShadow="0 0 15px cyan";
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),400);
 });
 
 </script>
