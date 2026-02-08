@@ -2,31 +2,30 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Secure Network Terminal</title>
+<title>Secure Terminal</title>
 
 <style>
 
 body{
+margin:0;
 background:black;
 color:#00ff00;
 font-family:monospace;
-padding:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+text-align:center;
+}
+
+#box{
+font-size:22px;
+width:80%;
+}
+
+.loading{
+margin-top:20px;
 font-size:18px;
-}
-
-#terminal{
-white-space:pre-line;
-}
-
-.cursor{
-display:inline-block;
-width:10px;
-background:#00ff00;
-animation:blink 1s infinite;
-}
-
-@keyframes blink{
-50%{opacity:0;}
 }
 
 </style>
@@ -34,110 +33,115 @@ animation:blink 1s infinite;
 
 <body>
 
-<div id="terminal"></div>
+<div id="box"></div>
 
 <script>
 
-let terminal=document.getElementById("terminal");
+let box=document.getElementById("box");
 
-function typeLine(text, delay=40){
+/* typing effect */
+function typeText(text,speed=40){
 return new Promise(resolve=>{
+box.innerHTML="";
 let i=0;
+
 let interval=setInterval(()=>{
-terminal.innerHTML+=text[i];
+box.innerHTML+=text[i];
 i++;
+
 if(i>=text.length){
 clearInterval(interval);
-terminal.innerHTML+="\n";
 resolve();
 }
-},delay);
+},speed);
+
 });
 }
 
+/* loading dots */
+function loading(seconds=2){
+return new Promise(resolve=>{
+let dots=0;
+
+let interval=setInterval(()=>{
+dots++;
+box.innerHTML+=".";
+
+if(dots>=3){
+box.innerHTML=box.innerHTML.replace(/\.+$/,"");
+dots=0;
+}
+
+},400);
+
+setTimeout(()=>{
+clearInterval(interval);
+resolve();
+},seconds*1000);
+
+});
+}
+
+/* step display */
+async function step(text,loadTime=2){
+await typeText(text);
+await loading(loadTime);
+}
+
+/* main sequence */
+
+async function start(){
+
+await step("Connecting to device",3);
+
+await step("Bypassing firewall",3);
+
+await step("Scanning permissions",2);
+
+await step("Connecting microphone",2);
+await typeText("✔ Microphone Connected");
+await wait(1500);
+
+await step("Connecting camera",2);
+await typeText("✔ Camera Connected");
+await wait(1500);
+
+await step("Indexing storage files",3);
+
+await step("Collecting system information",2);
+
+await step("Searching orbital satellites",3);
+
+await step("Orbital satellite found",2);
+
+await step("Establishing satellite link",3);
+
+await step("Preparing data transfer",2);
+
+await upload();
+
+await typeText("✔ Data Transfer Complete");
+}
+
+/* upload bar */
+
+async function upload(){
+
+for(let i=0;i<=100;i++){
+
+box.innerHTML="Transferring Data\n\n["+ "█".repeat(i/5) + " ".repeat(20-i/5) + "] "+i+"%";
+
+await wait(60);
+}
+
+}
+
+/* wait helper */
 function wait(ms){
 return new Promise(r=>setTimeout(r,ms));
 }
 
-async function startHack(){
-
-await typeLine("Initializing Secure Network Terminal...");
-await wait(500);
-
-await typeLine("Connecting to target device...");
-await wait(800);
-
-await typeLine("[✔] Device Found");
-await wait(500);
-
-await typeLine("Bypassing firewall...");
-await wait(1200);
-
-await typeLine("[✔] Firewall Bypassed");
-await wait(600);
-
-await typeLine("Scanning device permissions...");
-await wait(900);
-
-await typeLine("Accessing Microphone...");
-await wait(1000);
-await typeLine("[✔] Microphone Connected");
-
-await typeLine("Accessing Camera...");
-await wait(1200);
-await typeLine("[✔] Camera Connected");
-
-await typeLine("Accessing Storage...");
-await wait(1000);
-await typeLine("[✔] Files Indexed");
-
-await typeLine("Collecting System Information...");
-await wait(1000);
-await typeLine("Extracting IP Address...");
-await wait(800);
-await typeLine("Encrypting user data...");
-await wait(1200);
-
-await typeLine("Searching orbital satellites...");
-await wait(1500);
-
-await typeLine("[✔] Orbital Satellite Located");
-await wait(800);
-
-await typeLine("Attempting Satellite Connection...");
-await wait(1500);
-
-await typeLine("[✔] Satellite Connected");
-await wait(800);
-
-await typeLine("Preparing Data Transfer...");
-await wait(1000);
-
-await typeLine("Uploading...");
-await progressBar();
-
-await typeLine("");
-await typeLine("Transmission Complete.");
-await wait(500);
-
-await typeLine("User Data Successfully Archived.");
-await wait(500);
-
-await typeLine("Session Terminated.");
-
-}
-
-async function progressBar(){
-
-for(let i=0;i<=100;i++){
-terminal.innerHTML = terminal.innerHTML.replace(/Uploading.*/g,"");
-terminal.innerHTML += "Uploading: [" + "█".repeat(i/5) + " ".repeat(20-i/5) + "] " + i + "%\n";
-await wait(70);
-}
-
-}
-
-startHack();
+start();
 
 </script>
 
