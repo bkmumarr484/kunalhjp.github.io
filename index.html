@@ -2,38 +2,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Unknown Dimension</title>
+<title>Forbidden Dimension</title>
 
 <style>
 
 body{
 margin:0;
 background:black;
-color:white;
-font-family: monospace;
+color:#00ffea;
+font-family:monospace;
 overflow-x:hidden;
 }
 
-/* Moving Gradient Background */
-
-body::before{
-content:"";
-position:fixed;
-width:100%;
-height:100%;
-background:linear-gradient(45deg,red,blue,purple,cyan,black);
-background-size:600% 600%;
-animation:bgMove 20s infinite alternate;
-z-index:-2;
-opacity:0.5;
-}
-
-@keyframes bgMove{
-0%{background-position:0% 50%;}
-100%{background-position:100% 50%;}
-}
-
-/* Particle Canvas */
+/* MATRIX BACKGROUND */
 
 canvas{
 position:fixed;
@@ -45,52 +26,61 @@ z-index:-1;
 /* Sections */
 
 .section{
-height:100vh;
+height:120vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-padding:20px;
+padding:40px;
 }
 
-/* Text Effects */
+/* GLITCH TEXT */
 
-.glow{
+.glitch{
 font-size:70px;
-text-shadow:0 0 20px cyan,0 0 40px purple;
-animation:floating 3s infinite;
+position:relative;
+animation:glitch 1s infinite;
 }
 
-@keyframes floating{
-50%{transform:translateY(-20px);}
+@keyframes glitch{
+0%{text-shadow:2px 2px red;}
+50%{text-shadow:-2px -2px blue;}
+100%{text-shadow:2px 2px red;}
 }
 
-.weird{
-font-size:25px;
+/* Creepy paragraph */
+
+.story{
 width:70%;
-color:yellow;
-transform:rotate(-2deg);
-text-shadow:0 0 15px red;
+font-size:22px;
+line-height:35px;
+color:white;
+text-shadow:0 0 10px cyan;
 }
 
-.flicker{
-animation:flick 0.2s infinite;
-}
+/* Hidden ending */
 
-@keyframes flick{
-0%{opacity:1;}
-50%{opacity:0.2;}
-100%{opacity:1;}
-}
-
-/* Hidden message */
-
-#secret{
+#ending{
 display:none;
-font-size:40px;
+font-size:50px;
 color:red;
-text-shadow:0 0 20px red;
+text-shadow:0 0 30px red;
+}
+
+/* Loading Screen */
+
+#loading{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+color:lime;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:40px;
+z-index:999;
 }
 
 </style>
@@ -98,110 +88,135 @@ text-shadow:0 0 20px red;
 
 <body>
 
-<canvas id="particles"></canvas>
+<div id="loading">Initializing Unknown Reality...</div>
+
+<canvas id="matrix"></canvas>
+
+<audio autoplay loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_6b3e1e02fd.mp3">
+</audio>
 
 <div class="section">
-<h1 class="glow">WELCOME TO UNKNOWN</h1>
+<h1 class="glitch">YOU SHOULD NOT BE HERE</h1>
 </div>
 
 <div class="section">
-<p class="weird">
-This website should not exist...  
-But somehow... you are here...
+<p class="story">
+It started as a normal website...  
+But the deeper you scroll...  
+The more reality fades away...  
+The screen is observing your movements...
 </p>
 </div>
 
 <div class="section">
-<h1 class="flicker">REALITY IS BREAKING</h1>
+<h1 class="glitch">SYSTEM IS WATCHING</h1>
 </div>
 
 <div class="section">
-<p id="randomText"></p>
+<p class="story">
+Every visitor leaves a digital shadow...  
+And shadows... never disappear...  
+Someone tried to close this page once...  
+They never returned...
+</p>
 </div>
 
 <div class="section">
-<h1>Click Anywhere To Reveal Secret</h1>
-<p id="secret">YOU WERE NOT SUPPOSED TO SEE THIS</p>
+<h1 class="glitch">SIGNAL LOST</h1>
+</div>
+
+<div class="section">
+<p class="story">
+If random messages appear...  
+Ignore them...  
+They are not part of the website...
+</p>
+</div>
+
+<div class="section">
+<h1>Click Screen 7 Times To Unlock Ending</h1>
+<h1 id="ending">YOU HAVE AWAKENED IT</h1>
 </div>
 
 <script>
 
-/* Particle Background */
+/* LOADING SCREEN */
 
-let canvas=document.getElementById("particles");
+setTimeout(()=>{
+document.getElementById("loading").style.display="none";
+},3000);
+
+/* MATRIX RAIN */
+
+let canvas=document.getElementById("matrix");
 let ctx=canvas.getContext("2d");
 
-canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
+canvas.width=window.innerWidth;
 
-let particles=[];
+let letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+letters=letters.split("");
 
-for(let i=0;i<120;i++){
-particles.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-size:Math.random()*3,
-speedX:(Math.random()-0.5)*1,
-speedY:(Math.random()-0.5)*1
-});
+let fontSize=14;
+let columns=canvas.width/fontSize;
+let drops=[];
+
+for(let i=0;i<columns;i++){
+drops[i]=1;
 }
 
-function animateParticles(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
+function draw(){
+ctx.fillStyle="rgba(0,0,0,0.05)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
 
-particles.forEach(p=>{
-p.x+=p.speedX;
-p.y+=p.speedY;
+ctx.fillStyle="#0f0";
+ctx.font=fontSize+"px monospace";
 
-if(p.x<0||p.x>canvas.width)p.speedX*=-1;
-if(p.y<0||p.y>canvas.height)p.speedY*=-1;
+for(let i=0;i<drops.length;i++){
+let text=letters[Math.floor(Math.random()*letters.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
 
-ctx.fillStyle="white";
-ctx.fillRect(p.x,p.y,p.size,p.size);
-});
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
+drops[i]=0;
 
-requestAnimationFrame(animateParticles);
+drops[i]++;
 }
-animateParticles();
+}
 
-/* Random Mystery Text */
+setInterval(draw,33);
 
-let words=[
-"Someone is watching...",
-"The code is alive...",
-"You are not alone...",
-"Time is broken...",
-"Reality glitch detected...",
-"Signal lost...",
-"Memory corrupted..."
+/* RANDOM POPUPS */
+
+let messages=[
+"Do not trust the screen",
+"Close this page now",
+"You are being logged",
+"Signal anomaly detected",
+"Someone joined your session"
 ];
 
 setInterval(()=>{
-document.getElementById("randomText").innerText=
-words[Math.floor(Math.random()*words.length)];
-},2000);
+alert(messages[Math.floor(Math.random()*messages.length)]);
+},25000);
 
-/* Secret Click */
+/* SECRET ENDING */
+
+let clickCount=0;
 
 document.body.onclick=function(){
-document.getElementById("secret").style.display="block";
+clickCount++;
+if(clickCount==7){
+document.getElementById("ending").style.display="block";
 }
+};
 
-/* Mouse Glow Trail */
+/* SCROLL COLOR SHIFT */
 
-document.addEventListener("mousemove",function(e){
-let dot=document.createElement("div");
-dot.style.position="absolute";
-dot.style.left=e.pageX+"px";
-dot.style.top=e.pageY+"px";
-dot.style.width="6px";
-dot.style.height="6px";
-dot.style.background="cyan";
-dot.style.borderRadius="50%";
-dot.style.boxShadow="0 0 20px cyan";
-document.body.appendChild(dot);
-
-setTimeout(()=>dot.remove(),500);
+window.addEventListener("scroll",()=>{
+let scroll=window.scrollY;
+document.body.style.backgroundColor=
+`rgb(${scroll%255},0,${255-scroll%255})`;
 });
 
 </script>
