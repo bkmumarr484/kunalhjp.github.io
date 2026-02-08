@@ -2,30 +2,123 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Secure Terminal</title>
+<title>Under Construction</title>
 
 <style>
 
 body{
 margin:0;
-background:black;
-color:#00ff00;
-font-family:monospace;
+height:100vh;
+background:linear-gradient(#0a0a0a,#000);
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+overflow:hidden;
+font-family:sans-serif;
+color:white;
+perspective:1000px;
+}
+
+/* 3D Building Frame */
+
+.scene{
+position:absolute;
+width:600px;
+height:400px;
+transform-style:preserve-3d;
+transform:rotateX(60deg) rotateZ(45deg);
+animation:rotateScene 25s linear infinite;
+}
+
+@keyframes rotateScene{
+0%{transform:rotateX(60deg) rotateZ(0deg);}
+100%{transform:rotateX(60deg) rotateZ(360deg);}
+}
+
+/* Floors */
+
+.floor{
+position:absolute;
+width:600px;
+height:10px;
+background:rgba(0,255,255,0.3);
+border:1px solid cyan;
+}
+
+.floor:nth-child(1){top:0;}
+.floor:nth-child(2){top:80px;}
+.floor:nth-child(3){top:160px;}
+.floor:nth-child(4){top:240px;}
+.floor:nth-child(5){top:320px;}
+
+/* Pillars */
+
+.pillar{
+position:absolute;
+width:10px;
+height:350px;
+background:rgba(255,0,255,0.3);
+border:1px solid magenta;
+}
+
+.p1{left:0;}
+.p2{right:0;}
+.p3{left:0; transform:translateZ(-600px);}
+.p4{right:0; transform:translateZ(-600px);}
+
+/* Under Construction Text */
+
+.card{
+position:relative;
+z-index:2;
 text-align:center;
+backdrop-filter:blur(10px);
+padding:40px;
+border-radius:20px;
+background:rgba(255,255,255,0.05);
+box-shadow:0 0 30px cyan;
 }
 
-#box{
-font-size:22px;
-width:80%;
+h1{
+font-size:50px;
+background:linear-gradient(45deg,cyan,magenta);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:glow 3s infinite alternate;
 }
 
-.loading{
-margin-top:20px;
-font-size:18px;
+@keyframes glow{
+0%{text-shadow:0 0 10px cyan;}
+100%{text-shadow:0 0 30px magenta;}
+}
+
+p{
+color:#ccc;
+}
+
+/* Moving Construction Bars */
+
+.loader{
+margin-top:25px;
+width:250px;
+height:6px;
+background:#111;
+overflow:hidden;
+border-radius:10px;
+}
+
+.loader span{
+display:block;
+height:100%;
+width:0;
+background:linear-gradient(90deg,cyan,magenta);
+animation:load 4s infinite;
+}
+
+@keyframes load{
+0%{width:0;}
+50%{width:100%;}
+100%{width:0;}
 }
 
 </style>
@@ -33,117 +126,29 @@ font-size:18px;
 
 <body>
 
-<div id="box"></div>
+<div class="scene">
 
-<script>
+<div class="floor"></div>
+<div class="floor"></div>
+<div class="floor"></div>
+<div class="floor"></div>
+<div class="floor"></div>
 
-let box=document.getElementById("box");
+<div class="pillar p1"></div>
+<div class="pillar p2"></div>
+<div class="pillar p3"></div>
+<div class="pillar p4"></div>
 
-/* typing effect */
-function typeText(text,speed=40){
-return new Promise(resolve=>{
-box.innerHTML="";
-let i=0;
+</div>
 
-let interval=setInterval(()=>{
-box.innerHTML+=text[i];
-i++;
+<div class="card">
+<h1>UNDER CONSTRUCTION</h1>
+<p>Building something awesome...</p>
 
-if(i>=text.length){
-clearInterval(interval);
-resolve();
-}
-},speed);
-
-});
-}
-
-/* loading dots */
-function loading(seconds=2){
-return new Promise(resolve=>{
-let dots=0;
-
-let interval=setInterval(()=>{
-dots++;
-box.innerHTML+=".";
-
-if(dots>=3){
-box.innerHTML=box.innerHTML.replace(/\.+$/,"");
-dots=0;
-}
-
-},400);
-
-setTimeout(()=>{
-clearInterval(interval);
-resolve();
-},seconds*1000);
-
-});
-}
-
-/* step display */
-async function step(text,loadTime=2){
-await typeText(text);
-await loading(loadTime);
-}
-
-/* main sequence */
-
-async function start(){
-
-await step("Connecting to device",3);
-
-await step("Bypassing firewall",3);
-
-await step("Scanning permissions",2);
-
-await step("Connecting microphone",2);
-await typeText("✔ Microphone Connected");
-await wait(1500);
-
-await step("Connecting camera",2);
-await typeText("✔ Camera Connected");
-await wait(1500);
-
-await step("Indexing storage files",3);
-
-await step("Collecting system information",2);
-
-await step("Searching orbital satellites",3);
-
-await step("Orbital satellite found",2);
-
-await step("Establishing satellite link",3);
-
-await step("Preparing data transfer",2);
-
-await upload();
-
-await typeText("✔ Data Transfer Complete");
-}
-
-/* upload bar */
-
-async function upload(){
-
-for(let i=0;i<=100;i++){
-
-box.innerHTML="Transferring Data\n\n["+ "█".repeat(i/5) + " ".repeat(20-i/5) + "] "+i+"%";
-
-await wait(60);
-}
-
-}
-
-/* wait helper */
-function wait(ms){
-return new Promise(r=>setTimeout(r,ms));
-}
-
-start();
-
-</script>
+<div class="loader">
+<span></span>
+</div>
+</div>
 
 </body>
 </html>
