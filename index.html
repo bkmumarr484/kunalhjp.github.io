@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Hacking Simulator</title>
+<title>System Terminal</title>
 
 <style>
 body{
@@ -10,31 +10,68 @@ background:black;
 color:#00ff00;
 font-family:monospace;
 padding:20px;
+overflow:hidden;
+}
+
+#terminal{
+white-space:pre-line;
+font-size:16px;
+}
+
+.cursor{
+display:inline-block;
+width:10px;
+background:#00ff00;
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+50%{opacity:0;}
 }
 </style>
 </head>
 
 <body>
 
-<h2>System Breach Terminal</h2>
+<h2>Secure System Access</h2>
 <div id="terminal"></div>
 
-<script src="data.js"></script>
-
 <script>
+
+const hackData = [
+"Initializing system...",
+"Scanning network...",
+"Firewall detected...",
+"Bypassing security...",
+"Injecting payload...",
+"Access granted...",
+"Decrypting database...",
+"Extracting files...",
+"Uploading backdoor...",
+"System takeover complete.",
+"Simulation finished."
+];
+
 const terminal = document.getElementById("terminal");
 
-let i=0;
+let i = 0;
 
 function typeLine(){
 if(i < hackData.length){
-terminal.innerHTML += hackData[i] + "<br>";
+
+terminal.innerHTML += hackData[i] + "\n";
 i++;
-setTimeout(typeLine, 500);
+
+setTimeout(typeLine, 700);
+
+}else{
+terminal.innerHTML += "\n> SYSTEM READY <span class='cursor'></span>";
 }
+
 }
 
 typeLine();
+
 </script>
 
 </body>
