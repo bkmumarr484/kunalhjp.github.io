@@ -2,153 +2,51 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Under Construction</title>
+<title>Hacking Simulator</title>
 
 <style>
-
 body{
 margin:0;
-height:100vh;
-background:linear-gradient(#0a0a0a,#000);
-display:flex;
-justify-content:center;
-align-items:center;
-overflow:hidden;
-font-family:sans-serif;
-color:white;
-perspective:1000px;
+background:black;
+color:#00ff00;
+font-family:monospace;
+padding:20px;
 }
 
-/* 3D Building Frame */
-
-.scene{
-position:absolute;
-width:600px;
-height:400px;
-transform-style:preserve-3d;
-transform:rotateX(60deg) rotateZ(45deg);
-animation:rotateScene 25s linear infinite;
+#terminal{
+white-space:pre-line;
+font-size:16px;
 }
-
-@keyframes rotateScene{
-0%{transform:rotateX(60deg) rotateZ(0deg);}
-100%{transform:rotateX(60deg) rotateZ(360deg);}
-}
-
-/* Floors */
-
-.floor{
-position:absolute;
-width:600px;
-height:10px;
-background:rgba(0,255,255,0.3);
-border:1px solid cyan;
-}
-
-.floor:nth-child(1){top:0;}
-.floor:nth-child(2){top:80px;}
-.floor:nth-child(3){top:160px;}
-.floor:nth-child(4){top:240px;}
-.floor:nth-child(5){top:320px;}
-
-/* Pillars */
-
-.pillar{
-position:absolute;
-width:10px;
-height:350px;
-background:rgba(255,0,255,0.3);
-border:1px solid magenta;
-}
-
-.p1{left:0;}
-.p2{right:0;}
-.p3{left:0; transform:translateZ(-600px);}
-.p4{right:0; transform:translateZ(-600px);}
-
-/* Under Construction Text */
-
-.card{
-position:relative;
-z-index:2;
-text-align:center;
-backdrop-filter:blur(10px);
-padding:40px;
-border-radius:20px;
-background:rgba(255,255,255,0.05);
-box-shadow:0 0 30px cyan;
-}
-
-h1{
-font-size:50px;
-background:linear-gradient(45deg,cyan,magenta);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-animation:glow 3s infinite alternate;
-}
-
-@keyframes glow{
-0%{text-shadow:0 0 10px cyan;}
-100%{text-shadow:0 0 30px magenta;}
-}
-
-p{
-color:#ccc;
-}
-
-/* Moving Construction Bars */
-
-.loader{
-margin-top:25px;
-width:250px;
-height:6px;
-background:#111;
-overflow:hidden;
-border-radius:10px;
-}
-
-.loader span{
-display:block;
-height:100%;
-width:0;
-background:linear-gradient(90deg,cyan,magenta);
-animation:load 4s infinite;
-}
-
-@keyframes load{
-0%{width:0;}
-50%{width:100%;}
-100%{width:0;}
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="scene">
+<h2>System Breach Terminal</h2>
+<div id="terminal"></div>
 
-<div class="floor"></div>
-<div class="floor"></div>
-<div class="floor"></div>
-<div class="floor"></div>
-<div class="floor"></div>
+<script>
+const terminal = document.getElementById("terminal");
 
-<div class="pillar p1"></div>
-<div class="pillar p2"></div>
-<div class="pillar p3"></div>
-<div class="pillar p4"></div>
+async function loadHackData(){
+const res = await fetch("data.php");
+const data = await res.json();
 
-</div>
+let i=0;
 
-<div class="card">
-<h1>UNDER CONSTRUCTION</h1>
-<p>Building something awesome...</p>
+function typeLine(){
+if(i < data.length){
+terminal.innerHTML += data[i] + "\n";
+i++;
+setTimeout(typeLine, 500);
+}
+}
 
-<div class="loader">
-<span></span>
-</div>
-</div>
+typeLine();
+}
+
+loadHackData();
+</script>
 
 </body>
 </html>
