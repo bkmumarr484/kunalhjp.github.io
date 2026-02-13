@@ -3,71 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kunal Aesthetic</title>
+<title>Aesthetic</title>
 
 <style>
 
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
 height:100vh;
+overflow:hidden;
+font-family:sans-serif;
+background:black;
 display:flex;
 justify-content:center;
 align-items:center;
-font-family:sans-serif;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-overflow:hidden;
 }
 
-/* Floating circles */
-.circle{
+/* Animated gradient background */
+.bg{
 position:absolute;
+width:200%;
+height:200%;
+background:conic-gradient(
+#ff0080,
+#7928ca,
+#2afadf,
+#00f5a0,
+#ff0080
+);
+animation:rotate 20s linear infinite;
+filter:blur(120px);
+}
+
+@keyframes rotate{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+/* Floating glow dots */
+.dot{
+position:absolute;
+width:8px;
+height:8px;
+background:white;
 border-radius:50%;
-filter:blur(60px);
-animation:float 8s infinite ease-in-out;
-}
-
-.c1{
-width:300px;
-height:300px;
-background:#ff4ecd;
-top:10%;
-left:15%;
-}
-
-.c2{
-width:250px;
-height:250px;
-background:#00d4ff;
-bottom:15%;
-right:20%;
-animation-delay:2s;
-}
-
-.c3{
-width:200px;
-height:200px;
-background:#7dff8a;
-top:60%;
-left:5%;
-animation-delay:4s;
+opacity:0.6;
+animation:float 6s infinite ease-in-out;
 }
 
 @keyframes float{
 0%,100%{transform:translateY(0)}
-50%{transform:translateY(-40px)}
+50%{transform:translateY(-30px)}
 }
 
-/* Glass card */
-.card{
+/* Glass center element */
+.center{
 position:relative;
-padding:50px;
-width:320px;
+padding:80px 100px;
+border-radius:40px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(25px);
+box-shadow:0 0 80px rgba(255,255,255,0.1);
 text-align:center;
-border-radius:25px;
-background:rgba(255,255,255,0.1);
-backdrop-filter:blur(20px);
-box-shadow:0 0 40px rgba(0,0,0,0.3);
-color:white;
 animation:fade 2s ease;
 }
 
@@ -76,33 +77,26 @@ from{opacity:0;transform:scale(0.8)}
 to{opacity:1;transform:scale(1)}
 }
 
-.card h1{
-font-size:34px;
-margin-bottom:10px;
-letter-spacing:2px;
+.center h1{
+font-size:60px;
+letter-spacing:8px;
+background:linear-gradient(90deg,#ff0080,#00f5a0,#2afadf);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:shine 4s linear infinite;
 }
 
-.card p{
-opacity:0.8;
+@keyframes shine{
+0%{background-position:0%}
+100%{background-position:200%}
 }
 
-/* Glow button */
-.btn{
+.center p{
 margin-top:20px;
-padding:12px 30px;
-border:none;
-border-radius:50px;
-background:linear-gradient(45deg,#ff4ecd,#00d4ff);
 color:white;
-font-size:16px;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 0 15px #00d4ff;
-}
-
-.btn:hover{
-transform:scale(1.1);
-box-shadow:0 0 25px #ff4ecd;
+opacity:0.7;
+font-size:18px;
+letter-spacing:3px;
 }
 
 </style>
@@ -110,15 +104,23 @@ box-shadow:0 0 25px #ff4ecd;
 
 <body>
 
-<div class="circle c1"></div>
-<div class="circle c2"></div>
-<div class="circle c3"></div>
+<div class="bg"></div>
 
-<div class="card">
-<h1>Kunal Yadav</h1>
-<p>Welcome to my aesthetic space ✨</p>
-<button class="btn">Coming Soon</button>
+<div class="center">
+<h1>COMING SOON</h1>
+<p>Something Beautiful is Loading ✨</p>
 </div>
+
+<script>
+for(let i=0;i<40;i++){
+let d=document.createElement("div");
+d.className="dot";
+d.style.top=Math.random()*100+"%";
+d.style.left=Math.random()*100+"%";
+d.style.animationDelay=Math.random()*6+"s";
+document.body.appendChild(d);
+}
+</script>
 
 </body>
 </html>
