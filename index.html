@@ -1,87 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kunal Store</title>
+<title>Kunal Aesthetic</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial;
-background:#f1f3f6;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:sans-serif;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+overflow:hidden;
 }
 
-/* Header */
-.header{
-background:#2874f0;
-color:white;
-padding:15px;
-font-size:22px;
-font-weight:bold;
-text-align:center;
+/* Floating circles */
+.circle{
+position:absolute;
+border-radius:50%;
+filter:blur(60px);
+animation:float 8s infinite ease-in-out;
 }
 
-/* Product Grid */
-.products{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:15px;
-padding:15px;
+.c1{
+width:300px;
+height:300px;
+background:#ff4ecd;
+top:10%;
+left:15%;
 }
 
-/* Product Card */
+.c2{
+width:250px;
+height:250px;
+background:#00d4ff;
+bottom:15%;
+right:20%;
+animation-delay:2s;
+}
+
+.c3{
+width:200px;
+height:200px;
+background:#7dff8a;
+top:60%;
+left:5%;
+animation-delay:4s;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-40px)}
+}
+
+/* Glass card */
 .card{
-background:white;
-border-radius:10px;
-padding:15px;
+position:relative;
+padding:50px;
+width:320px;
 text-align:center;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-transition:0.3s;
+border-radius:25px;
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(20px);
+box-shadow:0 0 40px rgba(0,0,0,0.3);
+color:white;
+animation:fade 2s ease;
 }
 
-.card:hover{
-transform:scale(1.05);
+@keyframes fade{
+from{opacity:0;transform:scale(0.8)}
+to{opacity:1;transform:scale(1)}
 }
 
-.card img{
-width:100%;
-height:140px;
-object-fit:cover;
-border-radius:8px;
+.card h1{
+font-size:34px;
+margin-bottom:10px;
+letter-spacing:2px;
 }
 
-.price{
-color:green;
-font-weight:bold;
-margin:8px 0;
+.card p{
+opacity:0.8;
 }
 
-/* Button */
-button{
-background:#ff9f00;
+/* Glow button */
+.btn{
+margin-top:20px;
+padding:12px 30px;
 border:none;
-padding:10px;
+border-radius:50px;
+background:linear-gradient(45deg,#ff4ecd,#00d4ff);
 color:white;
-border-radius:6px;
+font-size:16px;
 cursor:pointer;
-font-weight:bold;
+transition:0.3s;
+box-shadow:0 0 15px #00d4ff;
 }
 
-button:hover{
-background:#fb641b;
-}
-
-.cart{
-position:fixed;
-top:15px;
-right:15px;
-background:#ff9f00;
-padding:10px 15px;
-border-radius:8px;
-color:white;
-font-weight:bold;
+.btn:hover{
+transform:scale(1.1);
+box-shadow:0 0 25px #ff4ecd;
 }
 
 </style>
@@ -89,52 +110,15 @@ font-weight:bold;
 
 <body>
 
-<div class="header">🛒 Kunal Store</div>
-
-<div class="cart">Cart: <span id="cartCount">0</span></div>
-
-<div class="products">
+<div class="circle c1"></div>
+<div class="circle c2"></div>
+<div class="circle c3"></div>
 
 <div class="card">
-<img src="https://picsum.photos/200?1">
-<h3>Smart Phone</h3>
-<p class="price">₹14,999</p>
-<button onclick="addCart()">Add to Cart</button>
+<h1>Kunal Yadav</h1>
+<p>Welcome to my aesthetic space ✨</p>
+<button class="btn">Coming Soon</button>
 </div>
-
-<div class="card">
-<img src="https://picsum.photos/200?2">
-<h3>Headphones</h3>
-<p class="price">₹1,999</p>
-<button onclick="addCart()">Add to Cart</button>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/200?3">
-<h3>Shoes</h3>
-<p class="price">₹2,499</p>
-<button onclick="addCart()">Add to Cart</button>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/200?4">
-<h3>Smart Watch</h3>
-<p class="price">₹3,999</p>
-<button onclick="addCart()">Add to Cart</button>
-</div>
-
-</div>
-
-<script>
-
-let cart = 0;
-
-function addCart(){
-cart++;
-document.getElementById("cartCount").innerText = cart;
-}
-
-</script>
 
 </body>
 </html>
