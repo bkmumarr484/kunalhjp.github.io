@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Ultra Visual</title>
+<title>Ultimate Visual</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -32,11 +32,10 @@ background:linear-gradient(90deg,#ff00ff,#00ffff,#00ff99);
 }
 </style>
 </head>
-
 <body>
 
 <div class="center">
-<h1>VISUAL EXPERIENCE</h1>
+<h1>IMMERSIVE SPACE</h1>
 </div>
 
 <audio id="music" loop>
@@ -47,6 +46,7 @@ background:linear-gradient(90deg,#ff00ff,#00ffff,#00ff99);
 
 <script>
 
+// Start music on tap
 document.body.addEventListener("click",()=>{
 document.getElementById("music").play();
 });
@@ -61,26 +61,29 @@ window.innerWidth/window.innerHeight,
 0.1,
 1000
 );
-camera.position.z = 30;
+camera.position.z = 40;
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(window.innerWidth,window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 🌌 Galaxy Generator
+// 🌌 GALAXY PARTICLES
 const galaxyGeo = new THREE.BufferGeometry();
-const starCount = 8000;
+const count = 12000;
 const pos = [];
 
-for(let i=0;i<starCount;i++){
-let radius = Math.random()*50;
-let angle = radius * 0.3;
+for(let i=0;i<count;i++){
+
+let radius = Math.random()*60;
+let angle = radius*0.25;
+
 pos.push(
 Math.cos(angle)*radius,
-(Math.random()-0.5)*5,
+(Math.random()-0.5)*15,
 Math.sin(angle)*radius
 );
+
 }
 
 galaxyGeo.setAttribute(
@@ -92,25 +95,42 @@ const galaxy = new THREE.Points(
 galaxyGeo,
 new THREE.PointsMaterial({
 color:0xff00ff,
-size:0.4
+size:0.5
 })
 );
 
 scene.add(galaxy);
 
-// 🌊 Audio Reactive Wave
-const geo = new THREE.PlaneGeometry(200,200,80,80);
+// 🌊 CYBER GRID WAVE
+const gridGeo = new THREE.PlaneGeometry(300,300,120,120);
 
-const mat = new THREE.MeshBasicMaterial({
+const gridMat = new THREE.MeshBasicMaterial({
 color:0x00ffff,
 wireframe:true
 });
 
-const wave = new THREE.Mesh(geo,mat);
-wave.rotation.x = -Math.PI/2;
-wave.position.y = -10;
+const grid = new THREE.Mesh(gridGeo,gridMat);
+grid.rotation.x = -Math.PI/2;
+grid.position.y = -15;
 
-scene.add(wave);
+scene.add(grid);
+
+// 🌀 BLACKHOLE CENTER
+const holeGeo = new THREE.SphereGeometry(5,32,32);
+const holeMat = new THREE.MeshBasicMaterial({
+color:0x000000
+});
+const blackhole = new THREE.Mesh(holeGeo,holeMat);
+scene.add(blackhole);
+
+// Mouse gravity
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener("mousemove",(e)=>{
+mouseX = (e.clientX/window.innerWidth - 0.5) * 20;
+mouseY = (e.clientY/window.innerHeight - 0.5) * 20;
+});
 
 // Animate
 function animate(){
@@ -119,15 +139,22 @@ requestAnimationFrame(animate);
 
 const time = Date.now()*0.002;
 
-// Wave movement
-for(let i=0;i<wave.geometry.attributes.position.count;i++){
-let y = Math.sin(i/6 + time)*1.5;
-wave.geometry.attributes.position.setZ(i,y);
-}
-wave.geometry.attributes.position.needsUpdate = true;
+// Grid wave motion
+for(let i=0;i<grid.geometry.attributes.position.count;i++){
 
-// Galaxy rotate
+let y = Math.sin(i/5 + time)*2;
+grid.geometry.attributes.position.setZ(i,y);
+
+}
+grid.geometry.attributes.position.needsUpdate = true;
+
+// Galaxy rotation
 galaxy.rotation.y += 0.001;
+
+// Camera parallax
+camera.position.x += (mouseX - camera.position.x)*0.02;
+camera.position.y += (-mouseY - camera.position.y)*0.02;
+camera.lookAt(scene.position);
 
 renderer.render(scene,camera);
 }
