@@ -1,125 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aesthetic</title>
+<title>Visual</title>
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
 body{
-height:100vh;
+margin:0;
 overflow:hidden;
-font-family:sans-serif;
 background:black;
-display:flex;
-justify-content:center;
-align-items:center;
+font-family:sans-serif;
 }
 
-/* Animated gradient background */
-.bg{
-position:absolute;
-width:200%;
-height:200%;
-background:conic-gradient(
-#ff0080,
-#7928ca,
-#2afadf,
-#00f5a0,
-#ff0080
-);
-animation:rotate 20s linear infinite;
-filter:blur(120px);
+/* Canvas */
+canvas{
+display:block;
 }
 
-@keyframes rotate{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
-}
-
-/* Floating glow dots */
-.dot{
-position:absolute;
-width:8px;
-height:8px;
-background:white;
-border-radius:50%;
-opacity:0.6;
-animation:float 6s infinite ease-in-out;
-}
-
-@keyframes float{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-30px)}
-}
-
-/* Glass center element */
+/* Center text */
 .center{
-position:relative;
-padding:80px 100px;
-border-radius:40px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(25px);
-box-shadow:0 0 80px rgba(255,255,255,0.1);
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+color:white;
 text-align:center;
-animation:fade 2s ease;
-}
-
-@keyframes fade{
-from{opacity:0;transform:scale(0.8)}
-to{opacity:1;transform:scale(1)}
+pointer-events:none;
 }
 
 .center h1{
-font-size:60px;
+font-size:70px;
 letter-spacing:8px;
-background:linear-gradient(90deg,#ff0080,#00f5a0,#2afadf);
+background:linear-gradient(90deg,#ff00ff,#00ffff,#00ff99);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-animation:shine 4s linear infinite;
-}
-
-@keyframes shine{
-0%{background-position:0%}
-100%{background-position:200%}
 }
 
 .center p{
-margin-top:20px;
-color:white;
-opacity:0.7;
-font-size:18px;
-letter-spacing:3px;
+opacity:0.6;
+letter-spacing:4px;
 }
 
 </style>
 </head>
-
 <body>
-
-<div class="bg"></div>
 
 <div class="center">
 <h1>COMING SOON</h1>
-<p>Something Beautiful is Loading ✨</p>
+<p>CYBER AESTHETIC</p>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
 <script>
-for(let i=0;i<40;i++){
-let d=document.createElement("div");
-d.className="dot";
-d.style.top=Math.random()*100+"%";
-d.style.left=Math.random()*100+"%";
-d.style.animationDelay=Math.random()*6+"s";
-document.body.appendChild(d);
+
+// Scene
+const scene = new THREE.Scene();
+
+// Camera
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+);
+camera.position.z = 20;
+
+// Renderer
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// Lights
+const light = new THREE.PointLight(0x00ffff,2);
+light.position.set(10,10,10);
+scene.add(light);
+
+// 🌌 Nebula Particles
+const starsGeo = new THREE.BufferGeometry();
+const starCount = 4000;
+const starPos = [];
+
+for(let i=0;i<starCount;i++){
+starPos.push(
+(Math.random()-0.5)*200,
+(Math.random()-0.5)*200,
+(Math.random()-0.5)*200
+);
 }
+
+starsGeo.setAttribute(
+"position",
+new THREE.Float32BufferAttribute(starPos,3)
+);
+
+const stars = new THREE.Points(
+starsGeo,
+new THREE.PointsMaterial({
+color:0xff00ff,
+size:0.4
+})
+);
+
+scene.add(stars);
+
+// 🌊 Animated Mesh Wave
+const geometry = new THREE.PlaneGeometry(100,100,100,100);
+
+const material = new THREE.MeshBasicMaterial({
+color:0x00ffff,
+wireframe:true
+});
+
+const plane = new THREE.Mesh(geometry,material);
+plane.rotation.x = -Math.PI/2;
+plane.position.y = -8;
+
+scene.add(plane);
+
+// Mouse 3D Tilt
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener("mousemove",(e)=>{
+mouseX = (e.clientX/window.innerWidth - 0.5) * 5;
+mouseY = (e.clientY/window.innerHeight - 0.5) * 5;
+});
+
+// Animate
+function animate(){
+
+requestAnimationFrame(animate);
+
+// Wave animation
+const time = Date.now() * 0.002;
+for(let i=0;i<plane.geometry.attributes.position.count;i++){
+let y = Math.sin(i/5 + time) * 0.5;
+plane.geometry.attributes.position.setZ(i,y);
+}
+plane.geometry.attributes.position.needsUpdate = true;
+
+// Parallax camera
+camera.position.x += (mouseX - camera.position.x) * 0.05;
+camera.position.y += (-mouseY - camera.position.y) * 0.05;
+camera.lookAt(scene.position);
+
+// Rotate stars
+stars.rotation.y += 0.0008;
+
+renderer.render(scene,camera);
+}
+
+animate();
+
+// Resize
+window.addEventListener("resize",()=>{
+camera.aspect = window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
 </script>
 
 </body>
