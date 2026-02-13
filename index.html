@@ -6,16 +6,10 @@
 
 <style>
 body{
-margin:0;
 background:black;
 color:#00ff00;
 font-family:monospace;
 padding:20px;
-}
-
-#terminal{
-white-space:pre-line;
-font-size:16px;
 }
 </style>
 </head>
@@ -25,27 +19,22 @@ font-size:16px;
 <h2>System Breach Terminal</h2>
 <div id="terminal"></div>
 
+<script src="data.js"></script>
+
 <script>
 const terminal = document.getElementById("terminal");
-
-async function loadHackData(){
-const res = await fetch("data.php");
-const data = await res.json();
 
 let i=0;
 
 function typeLine(){
-if(i < data.length){
-terminal.innerHTML += data[i] + "\n";
+if(i < hackData.length){
+terminal.innerHTML += hackData[i] + "<br>";
 i++;
 setTimeout(typeLine, 500);
 }
 }
 
 typeLine();
-}
-
-loadHackData();
 </script>
 
 </body>
