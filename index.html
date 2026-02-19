@@ -17,51 +17,14 @@ overflow-x:hidden;
 cursor:none;
 }
 
-/* Intro Overlay */
-#intro{
+/* 3D Canvas */
+#bg{
 position:fixed;
+top:0;
+left:0;
 width:100%;
 height:100%;
-background:#000;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
-font-family:'Orbitron',sans-serif;
-font-size:40px;
-letter-spacing:4px;
-animation:fadeOut 2.5s forwards 2s;
-}
-
-@keyframes fadeOut{
-to{opacity:0;visibility:hidden;}
-}
-
-/* Parallax Background */
-.parallax{
-position:fixed;
-top:0;left:0;
-width:100%;
-height:100%;
-background:radial-gradient(circle at center,#0f0f0f,#050505);
-z-index:-2;
-}
-
-/* Floating Orb */
-.orb{
-position:fixed;
-width:300px;
-height:300px;
-border-radius:50%;
-background:radial-gradient(circle,#00f5ff33,#8b5cf633,transparent);
-filter:blur(60px);
-animation:float 8s ease-in-out infinite alternate;
 z-index:-1;
-}
-
-@keyframes float{
-0%{transform:translate(20vw,20vh);}
-100%{transform:translate(60vw,60vh);}
 }
 
 /* Sections */
@@ -74,8 +37,8 @@ align-items:center;
 text-align:center;
 padding:40px;
 opacity:0;
-transform:translateY(80px);
-transition:1.2s ease;
+transform:translateY(60px);
+transition:1s ease;
 }
 
 section.show{
@@ -128,7 +91,7 @@ transition:.4s;
 }
 
 .card:hover{
-transform:translateY(-15px) scale(1.05);
+transform:translateY(-10px);
 border-color:#00f5ff;
 box-shadow:0 0 40px #00f5ff;
 }
@@ -153,12 +116,9 @@ z-index:999;
 }
 </style>
 </head>
-
 <body>
 
-<div id="intro">KUNAL</div>
-<div class="parallax"></div>
-<div class="orb"></div>
+<canvas id="bg"></canvas>
 <div class="cursor"></div>
 
 <section>
@@ -188,16 +148,17 @@ z-index:999;
 
 <section>
 <h2>Contact</h2>
-<p>Email: yourmail@example.com</p>
+<p>Email: pagalhu@gmail.com</p>
 </section>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 
 /* Scroll Reveal */
 const sections=document.querySelectorAll("section");
 window.addEventListener("scroll",()=>{
 sections.forEach(sec=>{
-if(sec.getBoundingClientRect().top < window.innerHeight-120){
+if(sec.getBoundingClientRect().top < window.innerHeight-100){
 sec.classList.add("show");
 }
 });
@@ -208,6 +169,47 @@ const cursor=document.querySelector(".cursor");
 document.addEventListener("mousemove",e=>{
 cursor.style.left=e.clientX+"px";
 cursor.style.top=e.clientY+"px";
+});
+
+/* THREE JS 3D Background */
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({canvas: document.getElementById("bg"), alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const geometry = new THREE.IcosahedronGeometry(2,1);
+const material = new THREE.MeshStandardMaterial({
+color:0x00f5ff,
+wireframe:true
+});
+
+const sphere = new THREE.Mesh(geometry, material);
+scene.add(sphere);
+
+const light = new THREE.PointLight(0x8b5cf6, 1);
+light.position.set(5,5,5);
+scene.add(light);
+
+camera.position.z = 6;
+
+function animate(){
+requestAnimationFrame(animate);
+sphere.rotation.x += 0.003;
+sphere.rotation.y += 0.004;
+renderer.render(scene, camera);
+}
+animate();
+
+/* Mouse interaction */
+document.addEventListener("mousemove", (e)=>{
+sphere.rotation.y = e.clientX * 0.0005;
+sphere.rotation.x = e.clientY * 0.0005;
+});
+
+window.addEventListener("resize", ()=>{
+camera.aspect = window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 </script>
