@@ -8,13 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@300;400&display=swap" rel="stylesheet">
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-scroll-behavior:smooth;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{
 background:#050505;
 color:#fff;
@@ -22,36 +17,26 @@ font-family:'Inter',sans-serif;
 overflow-x:hidden;
 }
 
-/* Animated Gradient Background */
-body::before{
-content:"";
+/* Particle Canvas */
+canvas{
 position:fixed;
 top:0;
 left:0;
-width:100%;
-height:100%;
-background:linear-gradient(45deg,#050505,#0f0f0f,#050505);
-background-size:300% 300%;
-animation:bgMove 12s infinite alternate;
 z-index:-1;
 }
 
-@keyframes bgMove{
-0%{background-position:0% 50%;}
-100%{background-position:100% 50%;}
-}
-
+/* Sections */
 section{
 min-height:100vh;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-padding:40px;
 text-align:center;
+padding:40px;
 opacity:0;
-transform:translateY(40px);
-transition:all 1s ease;
+transform:translateY(60px);
+transition:all 1.2s ease;
 }
 
 section.show{
@@ -61,8 +46,8 @@ transform:translateY(0);
 
 h1{
 font-family:'Orbitron',sans-serif;
-font-size:60px;
-letter-spacing:4px;
+font-size:70px;
+letter-spacing:6px;
 }
 
 h2{
@@ -72,80 +57,84 @@ color:#00f5ff;
 
 .typing{
 margin-top:15px;
-font-size:18px;
 opacity:.8;
 }
 
 .btn{
 margin-top:40px;
-padding:12px 30px;
+padding:14px 36px;
 border:1px solid #00f5ff;
 background:transparent;
 color:#00f5ff;
-text-decoration:none;
+cursor:pointer;
+position:relative;
 transition:.3s;
 }
 
 .btn:hover{
 background:#00f5ff;
 color:#000;
-box-shadow:0 0 20px #00f5ff;
+box-shadow:0 0 30px #00f5ff;
 }
 
+/* Cards */
 .card-container{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:20px;
-margin-top:40px;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:30px;
+margin-top:50px;
 width:100%;
-max-width:800px;
+max-width:900px;
 }
 
 .card{
-padding:30px;
-background:rgba(255,255,255,.05);
-border:1px solid #222;
-backdrop-filter:blur(10px);
-transition:.3s;
+padding:40px;
+background:rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.1);
+backdrop-filter:blur(15px);
+transition:.4s;
 }
 
 .card:hover{
 border-color:#00f5ff;
-box-shadow:0 0 20px #00f5ff;
+transform:translateY(-10px);
+box-shadow:0 0 30px #00f5ff;
 }
 
+/* Quote */
 .quote{
-font-size:32px;
-color:#8b5cf6;
+font-size:36px;
 font-family:'Orbitron',sans-serif;
+color:#8b5cf6;
 }
 
+/* Custom Cursor */
 .cursor{
-width:20px;
-height:20px;
+width:18px;
+height:18px;
 border:2px solid #00f5ff;
 border-radius:50%;
 position:fixed;
 pointer-events:none;
 transform:translate(-50%,-50%);
-transition:.1s;
+transition:.08s;
 z-index:999;
 }
 </style>
 </head>
-
 <body>
 
+<canvas id="particles"></canvas>
 <div class="cursor"></div>
 
 <section>
 <h1>KUNAL</h1>
 <h2>Think Beyond the Surface.</h2>
 <div class="typing" id="typing"></div>
-<a href="#about" class="btn">Enter My Space</a>
+<button class="btn">Enter My Space</button>
 </section>
 
-<section id="about">
+<section>
 <h2>// About</h2>
 <p>I question structure. I refine clarity. I explore ideas deeply.</p>
 </section>
@@ -171,35 +160,67 @@ z-index:999;
 
 <script>
 
-/* Fade In On Scroll */
+/* Fade Reveal */
 const sections=document.querySelectorAll("section");
 window.addEventListener("scroll",()=>{
 sections.forEach(sec=>{
-const top=sec.getBoundingClientRect().top;
-if(top<window.innerHeight-100){
+if(sec.getBoundingClientRect().top < window.innerHeight-100){
 sec.classList.add("show");
 }
 });
 });
 
-/* Typing Effect */
+/* Typing */
 const text="Logic. Curiosity. Precision.";
 let i=0;
 function type(){
 if(i<text.length){
 document.getElementById("typing").innerHTML+=text.charAt(i);
 i++;
-setTimeout(type,70);
+setTimeout(type,60);
 }
 }
 type();
 
-/* Cursor Glow */
+/* Cursor */
 const cursor=document.querySelector(".cursor");
 document.addEventListener("mousemove",e=>{
 cursor.style.left=e.clientX+"px";
 cursor.style.top=e.clientY+"px";
 });
+
+/* Particle Background */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particlesArray=[];
+for(let i=0;i<80;i++){
+particlesArray.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2,
+speedX:(Math.random()-.5)*.5,
+speedY:(Math.random()-.5)*.5
+});
+}
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particlesArray.forEach(p=>{
+p.x+=p.speedX;
+p.y+=p.speedY;
+if(p.x<0||p.x>canvas.width) p.speedX*=-1;
+if(p.y<0||p.y>canvas.height) p.speedY*=-1;
+ctx.fillStyle="#00f5ff";
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(animate);
+}
+animate();
 
 </script>
 
